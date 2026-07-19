@@ -109,3 +109,41 @@ export interface IWeeklySummary {
     };
   };
 }
+
+
+
+// Monthly summary interface
+export interface IMonthlySummary {
+  date: Date;
+  totalCalories: number;
+  totalProtein: number;
+  totalCarbs: number;
+  totalFat: number;
+  averageCalories: number;
+  totalEntries: number;
+    monthlyData: Record<string, {
+    calories: number;
+    carbs: number;
+    fat: number;
+    protein: number;
+    count: number;
+  }>;
+
+  macros: {
+    protein: {
+      grams: number;
+      calories: number;
+      percentage: number;
+    };
+    carbs: {
+      grams: number;
+      calories: number;
+      percentage: number;
+    };
+    fat: {
+      grams: number;
+      calories: number;
+      percentage: number;
+    };
+  };
+}

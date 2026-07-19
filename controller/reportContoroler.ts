@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import User from "../lib/model/User";
 import { getWeeklySummery } from "../lib/services/weekly-reports.service";
 import { getDailySummery } from "../lib/services/daily-reports.service";
+import { getMonthlySummery } from "../lib/services/monthly-reports.service";
 
 // daily reports controller
 export const getDailyReports = async (req: Request, res: Response) => {
@@ -156,16 +157,17 @@ export const getMonthlyReports = async (req: Request, res: Response) => {
     }
     const today = new Date();
     today.setHours(23, 59, 59, 999); // Set to the end of today
-    // calculate the start of the week (7 days ago)
-    const weekAgo = new Date(today);
-    weekAgo.setDate(today.getDate() - 6);
-    weekAgo.setHours(0, 0, 0, 0); // Set to the start of the week
+    const monthAgo = new Date(today);
+    monthAgo.setDate(today.getDate() - 29);
+    monthAgo.setHours(0, 0, 0, 0); // Set to the start of the month
+    console.log("monthAgo", monthAgo)
 
-    const dailySummary = await getWeeklySummery(userId, weekAgo, today);
+    const dailySummary = await getMonthlySummery(userId, monthAgo, today);
 
     // build 7 days summary
-    const dailySummaries: Array<{
+    const monthlySummery: Array<{
       goal: number;
+      day:number;
       fat: number;
       protein: number;
       carbs: number;
@@ -184,15 +186,15 @@ export const getMonthlyReports = async (req: Request, res: Response) => {
     }
 
     const [year, month, day] = parts;
-    const startDte = new Date(Date.UTC(year!, month! - 1, day! - 6));
-    for(let i = 0; i < 7; i++) {
-      const date=new Date(startDte);
-      date.setDate(startDte.getDate() + i);
+    for(let i = 1; i <= 30; i++) {
+      const date=new Date(monthAgo);
+      date.setDate(monthAgo.getDate() + i);
       const dateStr = date.toISOString().split("T")[0];
-      const dayData = dailySummary.dailyData[dateStr!] || { calories: 0, carbs: 0, fat: 0, protein: 0, count: 0 };
+      const dayData = dailySummary.monthlyData[dateStr!] || { calories: 0, carbs: 0, fat: 0, protein: 0, count: 0 };
 
-      dailySummaries.push({
+      monthlySummery.push({
         date: dateStr||"",
+        day:i,
         dayName: date.toLocaleDateString("en-US", { weekday: "short" , timeZone: "UTC" }),
         goal: user.dailyCalorieGaol,
         calories: dayData.calories,
@@ -205,9 +207,9 @@ export const getMonthlyReports = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({
-      message: "Weekly summary fetched successfully",
+      message: "Monthly summary fetched successfully",
       data: {
-        week:dailySummaries,
+        monthly:monthlySummery,
         totalEntries: dailySummary.totalEntries,
         totalCalories: dailySummary.totalCalories,
         averageCalories: dailySummary.averageCalories,
@@ -216,9 +218,9 @@ export const getMonthlyReports = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.log("Failed to process saving food", error);
+    console.log("Failed to read monthly report", error);
     return res.status(500).json({
-      message: "Failed to process saving food",
+      message: "Failed to read monthly report",
     });
   }
 };
