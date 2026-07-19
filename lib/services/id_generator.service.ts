@@ -1,6 +1,5 @@
-import { nanoid } from "nanoid"
+import { randomUUID } from "crypto";
 
-export const generateUniqueId=(title:string):string=>{
-    const id=nanoid()
- return `${title}_${id}`
-}
+export const generateUniqueId = (title: string): string => {
+  return `${title}_${randomUUID()}`;
+};
