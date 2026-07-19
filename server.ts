@@ -19,6 +19,17 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/food", food);
 app.use("/api/v1/reports", report);
 
+
+// error handling
+app.use((err:Error, req:Request, res:Response, next:NextFunction)=>{
+	console.log(err.stack)
+	res.status(500).json({message:"Internal server Error"})
+})
+
+// NotFound
+app.use(( req:Request, res:Response, next:NextFunction)=>{
+	res.status(400).json({message:"Route not Found"})
+})
 const PORT = process.env.PORT ? Number(process.env.PORT) : 3000;
 
 app.listen(PORT, () => {
