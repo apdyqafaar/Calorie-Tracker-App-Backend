@@ -10,6 +10,6 @@ const router=express.Router();
 router.post("/register", validate(authSchemas.register), register);
 router.post("/login", validate(authSchemas.login), login);
 router.get("/me", protect, getUser);
-router.get("/update-profile", protect, updateProfile);
+router.post("/update-profile", protect, updateProfile);
 
 export default router;
