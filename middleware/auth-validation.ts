@@ -65,6 +65,8 @@ export const commonSchemas = {
     .min(2, 'Name must be at least 2 characters')
     .max(100, 'Name is too long')
     .regex(/^[a-zA-Z\s-]+$/, 'Name can only contain letters, spaces, and hyphens'),
+  dailyCalorieGoal: z.number().optional(),
+  onboardingCompleted: z.boolean().optional(),
 };
 
 // Auth validation schemas
@@ -79,7 +81,15 @@ export const authSchemas = {
     email: commonSchemas.email,
     password: z.string().min(1, 'Password is required'),
   }),
+
+  update: z.object({
+    name: commonSchemas.name.optional(),
+    dailyCalorieGoal: commonSchemas.dailyCalorieGoal,
+    onboardingCompleted: commonSchemas.onboardingCompleted,
+  })
 };
+
+
 
 // Input sanitization middleware
 // export const sanitizeInput = (req: Request, res: Response, next: NextFunction): void => {

@@ -86,3 +86,38 @@ export const getUser = async (req: Request, res: Response) => {
  }
 };
 
+// register controller
+export const updateProfile = async (req: Request, res: Response) => {
+ try {
+   // Implementation for login
+  const validationResult = authSchemas.update.safeParse(req.body);
+  if (!validationResult.success) {
+    const errors = validationResult.error.issues.map((err) => ({
+      field: err.path.join('.') || 'unknown',
+      message: err.message
+    }));
+    return res.status(400).json({
+      success: false,
+      message: 'update-profile validation failed',
+      errors,
+      timestamp: new Date().toISOString()
+    });
+  }
+
+  const { name,dailyCalorieGoal,onboardingCompleted } = validationResult.data;
+   // Implementation for getting user
+   const userId = req.user?.userId;
+    if (!userId) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+  const user = await authServices.updateProfile(userId,name, dailyCalorieGoal, onboardingCompleted);
+  return res.status(201).json({ message: 'User updated in successfully' , user,  });
+ } catch (error) {
+  console.error('updating-profile error:', error);
+  return res.status(401).json(error instanceof Error ? { message: error.message } : { message: 'An error occurred during updating-profile' });
+ }
+
+};
+

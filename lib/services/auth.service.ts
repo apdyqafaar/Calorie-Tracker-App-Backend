@@ -66,6 +66,22 @@ export class AuthService {
   throw new Error('Error occurred while fetching user details');
  }
   };
+
+    updateProfile = async (userId: string,name?:string, dailyCalorieGoal?:number,onboardingCompleted?:boolean) => {
+ try {
+     const user = await User.findById(userId).select('-password');
+    if (!user) {
+      throw new Error('User not found');
+    }
+    if(name&&name.trim()!==undefined)user.name=name
+    if(dailyCalorieGoal!==undefined)user.dailyCalorieGaol=dailyCalorieGoal
+    if(onboardingCompleted!==undefined)user.onboardingCompleted=onboardingCompleted
+    const updated=await user.save()
+    return updated;
+ } catch (error) {
+  throw new Error('Error occurred while updating user profile details');
+ }
+  };
 }
 
 export const authServices = new AuthService();
