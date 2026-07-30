@@ -160,7 +160,9 @@ export const discardFood = async (req: Request, res: Response) => {
     }
 
     await deleteImage(storageKey)
-
+ return res.status(201).json({
+    message:"Successfully discarded your food",
+  })
   
   } catch (error) {
   console.log("Internal server error for deleting image on R2", error)
