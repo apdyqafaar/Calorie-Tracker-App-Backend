@@ -49,7 +49,7 @@ export const analyzeFood = async (image: string): Promise<foodAnalysis> => {
                 }
             ],
             response_format: zodResponseFormat(FoodAnalysisSchema, "foodAnalysis"),
-            max_completion_tokens: 3000,
+            max_completion_tokens: 5000,
             temperature: 0.1,
         })
 
