@@ -80,7 +80,7 @@ export const analyze = async (req: Request, res: Response) => {
   console.log("optimizing the image...");
   const optimizedImage = await foodServices.optimizeImageSize(image);
 
-  // uploading on r2 cloude
+  // uploading on r2 cloud
   console.log("uploading the image...");
   const { key, ur:url } = await uploadR2(optimizedImage);
   console.log(`uploaded successfully key: ${key}`);

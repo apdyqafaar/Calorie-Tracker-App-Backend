@@ -17,7 +17,6 @@ const fileFilter=(req:Request, file:Express.Multer.File, cb:multer.FileFilterCal
     }else{
            return cb(new Error("Invalid file type"))
     }
-     return cb(new Error("Invalid file type"))
 }
 
 const upload=multer({
