@@ -26,7 +26,7 @@ export const register = async (req: Request, res: Response) => {
   const user=await authServices.register({  email, password,name:name||"" });
  
   // generate token here
-  const token = jwtService.generateToken({ userId: user.id, email: user.email, name: user.name });
+  const token = jwtService.generateToken({ userId: user.id });
   
 
   return res.status(201).json({ message: 'User registered successfully' , user, token });
@@ -61,7 +61,7 @@ export const login = async (req: Request, res: Response) => {
 
  
   // generate token here
-  const token = jwtService.generateToken({ userId: user.id, email: user.email, name: user.name });
+  const token = jwtService.generateToken({ userId: user.id});
   
 
   return res.status(201).json({ message: 'User logged in successfully' , user, token });

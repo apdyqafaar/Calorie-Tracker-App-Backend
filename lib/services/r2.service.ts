@@ -3,7 +3,6 @@ import { generateUniqueId } from "./id_generator.service"
 import { r2Config } from "../../config/r2"
 
 export const uploadR2=async(buffer:Buffer):Promise<{ur:string, key:string}>=>{
-  const filename=`${generateUniqueId("image")}.jpeg`
   const key=generateUniqueId("key")
 
   try {
