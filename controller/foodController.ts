@@ -112,7 +112,7 @@ const imageBase64=`data:image/jpeg;base64,${optimizedImage.toString()}`
 // save food
 export const saveFood = async (req: Request, res: Response) => {
   try{
-    const {foodName,calorie,protein,fat, carbs,imageUrl,storageKey}=req.body
+    const {foodName,calorie,protein,fat, carbs,imageUrl,storageKey,mealType}=req.body
     if(!foodName || !calorie||!fat ||!carbs ||!protein ||!imageUrl ||!storageKey){
        return res.status(401).json({
      message:"All food info are required"
@@ -133,7 +133,8 @@ export const saveFood = async (req: Request, res: Response) => {
     fat,
     carbs,
     imageUrl,
-    storageKey
+    storageKey,
+    mealType:mealType||"other"
   })
   } catch (error) {
   console.log("Failed to process saving food", error)
