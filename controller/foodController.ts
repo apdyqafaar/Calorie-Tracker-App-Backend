@@ -136,6 +136,9 @@ export const saveFood = async (req: Request, res: Response) => {
     storageKey,
     mealType:mealType||"other"
   })
+  return res.status(201).json({
+    message:"Successfully saved your food",
+  })
   } catch (error) {
   console.log("Failed to process saving food", error)
   return res.status(500).json({
