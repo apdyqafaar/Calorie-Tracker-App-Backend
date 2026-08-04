@@ -27,7 +27,7 @@ export const uploadR2=async(buffer:Buffer):Promise<{ur:string, key:string}>=>{
 
 // delete file on r2
 export const deleteImage=async(storageKey:string):Promise<void>=>{
-  const key=storageKey.trim()
+  const key=storageKey
 
   try {
     // upload img

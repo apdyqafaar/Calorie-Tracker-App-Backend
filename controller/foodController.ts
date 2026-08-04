@@ -151,6 +151,7 @@ export const saveFood = async (req: Request, res: Response) => {
 export const discardFood = async (req: Request, res: Response) => {
   try{
     const {storageKey}=req.body
+    console.log("storageKey", storageKey)
     if(!storageKey){
        return res.status(401).json({
      message:"StorageKey is required"
