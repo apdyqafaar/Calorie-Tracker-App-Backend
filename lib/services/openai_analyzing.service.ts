@@ -29,7 +29,7 @@ export const analyzeFood = async (image: string): Promise<foodAnalysis> => {
       )
 
         const completion = await openai.chat.completions.parse({
-            model: "nvidia/nemotron-nano-12b-v2-vl:free",
+            model: "openai/gpt-5.6-luna",
             messages: [
                 {
                     role: "user",
@@ -49,7 +49,7 @@ export const analyzeFood = async (image: string): Promise<foodAnalysis> => {
                 }
             ],
             response_format: zodResponseFormat(FoodAnalysisSchema, "foodAnalysis"),
-            max_completion_tokens: 300,
+            max_completion_tokens: 5000,
             temperature: 0.1,
         })
 
