@@ -155,14 +155,26 @@ export const getMonthlyReports = async (req: Request, res: Response) => {
         message: "User not found",
       });
     }
+    const {monthReport}=req.query
+     let monthAgo = new Date();
+     let currentDate = new Date();
+    if(monthReport&& typeof monthReport==="string"){
+       monthAgo=new Date(monthReport)
+       currentDate = new Date(monthReport);
+       monthAgo.setHours(23, 59, 59, 999);
+       currentDate.setHours(23, 59, 59, 999);
+    }else{
     const today = new Date();
-    today.setHours(23, 59, 59, 999); // Set to the end of today
-    const monthAgo = new Date(today);
-    monthAgo.setDate(today.getDate() - 29);
+       today.setHours(23, 59, 59, 999);
+       monthAgo=new Date(today)
+       currentDate = new Date(today);
+    }
+   
+    monthAgo.setDate(currentDate.getDate() - 29);
     monthAgo.setHours(0, 0, 0, 0); // Set to the start of the month
     console.log("monthAgo", monthAgo)
 
-    const dailySummary = await getMonthlySummery(userId, monthAgo, today);
+    const dailySummary = await getMonthlySummery(userId, monthAgo, currentDate);
 
     // build 7 days summary
     const monthlySummery: Array<{
@@ -178,7 +190,7 @@ export const getMonthlyReports = async (req: Request, res: Response) => {
       dayName: string;
     }> = [];
 
-    const todyUTCDate = today.toISOString().split("T")[0] ?? "";
+    const todyUTCDate = currentDate.toISOString().split("T")[0] ?? "";
     const parts = todyUTCDate.split("-").map(Number);
 
     if (parts.length !== 3) {
