@@ -176,6 +176,55 @@ export const discardFood = async (req: Request, res: Response) => {
   })
  }
 };
+// Entries food
+export const getEntries = async (req: Request, res: Response) => {
+  try{
+    const userId=req.user?.userId
+    if(!userId){
+         return res.status(401).json({
+     message:"Unauthorized"
+  })
+    }
+
+    const {date, startDate, endDate, limit="50", page="1"}=req.query
+    let query:Record<string, any>={userId}
+    if(date && typeof date==="string"){
+      const targetDate=new Date(date)
+      const startOfDay=new Date(targetDate.setHours(0,0,0,0))
+      const endOfDay=new Date(targetDate.setHours(23,59,59,999))
+      query.timestamp={$gte:startOfDay,$lte:endOfDay}
+    }
+
+    if(startDate && endDate && typeof startDate==="string" && typeof endDate==="string"){
+      query.timestamp={$gte:new Date(startDate),$lte:new Date(endDate)}
+    }
+    let offset=(Number(page)-1)*Number(limit)
+    const [entries, totalEntries]=await Promise.all([
+      await Food.find(query).sort({createdAt:-1}).limit(Number(limit)).skip(Number(offset)),
+      await Food.countDocuments(query)
+    ])
+ 
+    const totalPages=Math.ceil(totalEntries/Number(limit))
+    return res.status(200).json({
+      message:"Successfully fetched your food entries",
+      entries,
+      pagination:{
+        currentPage:Number(page),
+        totalPages,
+        totalEntries,
+        limit:Number(limit),
+        hasNextPage:Number(page)<totalPages,
+        hasPrevPage:Number(page)>1
+      }
+    })
+  
+  } catch (error) {
+  console.log("Internal server error for deleting image on R2", error)
+  return res.status(500).json({
+    message:"Failed to process saving food",
+  })
+ }
+};
 
 
 
