@@ -76,10 +76,10 @@ export const getWeeklyReports = async (req: Request, res: Response) => {
     weekAgo.setDate(today.getDate() - 6);
     weekAgo.setHours(0, 0, 0, 0); // Set to the start of the week
 
-    const dailySummary = await getWeeklySummery(userId, weekAgo, today);
+    const weeklySummary = await getWeeklySummery(userId, weekAgo, today);
 
     // build 7 days summary
-    const dailySummaries: Array<{
+    const weeklySummaries: Array<{
       goal: number;
       fat: number;
       protein: number;
@@ -104,9 +104,9 @@ export const getWeeklyReports = async (req: Request, res: Response) => {
       const date=new Date(startDte);
       date.setDate(startDte.getDate() + i);
       const dateStr = date.toISOString().split("T")[0];
-      const dayData = dailySummary.dailyData[dateStr!] || { calories: 0, carbs: 0, fat: 0, protein: 0, count: 0 };
+      const dayData = weeklySummary.dailyData[dateStr!] || { calories: 0, carbs: 0, fat: 0, protein: 0, count: 0 };
 
-      dailySummaries.push({
+      weeklySummaries.push({
         date: dateStr||"",
         dayName: date.toLocaleDateString("en-US", { weekday: "short" , timeZone: "UTC" }),
         goal: user.dailyCalorieGaol,
@@ -122,12 +122,12 @@ export const getWeeklyReports = async (req: Request, res: Response) => {
     return res.status(200).json({
       message: "Weekly summary fetched successfully",
       data: {
-        week:dailySummaries,
-        totalEntries: dailySummary.totalEntries,
-        totalCalories: dailySummary.totalCalories,
-        averageCalories: dailySummary.averageCalories,
+        week:weeklySummaries,
+        totalEntries: weeklySummary.totalEntries,
+        totalCalories: weeklySummary.totalCalories,
+        averageCalories: weeklySummary.averageCalories,
         goal: user.dailyCalorieGaol,
-        macros: dailySummary.macros,
+        macros: weeklySummary.macros,
       },
     });
   } catch (error) {
