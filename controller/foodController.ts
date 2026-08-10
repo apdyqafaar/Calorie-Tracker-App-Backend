@@ -187,7 +187,7 @@ export const getEntries = async (req: Request, res: Response) => {
     }
 
     const {date, startDate, endDate, limit="50", page="1"}=req.query
-    let query:Record<string, any>={userId}
+    let query:Record<string, any>={_id:userId}
     if(date && typeof date==="string"){
       const targetDate=new Date(date)
       const startOfDay=new Date(targetDate.setHours(0,0,0,0))
