@@ -186,43 +186,62 @@ export const getEntries = async (req: Request, res: Response) => {
   })
     }
 
-    const {date, startDate, endDate, limit="50", page="1"}=req.query
-    let query:Record<string, any>={_id:userId}
-    if(date && typeof date==="string"){
-      const targetDate=new Date(date)
-      const startOfDay=new Date(targetDate.setHours(0,0,0,0))
-      const endOfDay=new Date(targetDate.setHours(23,59,59,999))
-      query.timestamp={$gte:startOfDay,$lte:endOfDay}
+    const {startDate, endDate, limit="50", page="1"}=req.query
+    const parsedLimit=Math.min(Math.max(Number(limit)||50, 1), 100)
+    const parsedPage = Math.max(Number(page) || 1, 1);
+    if(!parsedLimit||typeof parsedLimit!=="number"||parsedLimit>100){
+           return res.status(400).json({
+     message:"invalid query"
+  })
     }
+    let query:Record<string, any>={userId}
+   
 
     if(startDate && endDate && typeof startDate==="string" && typeof endDate==="string"){
-      query.timestamp={$gte:new Date(startDate),$lte:new Date(endDate)}
+      //  const targetDate=new Date(date)
+      const startOfDay=new Date(startDate)
+      const endOfDay=new Date(endDate)
+      endOfDay.setHours(23,59,59,999)
+      startOfDay.setHours(0,0,0,0)
+      query.timestamp={$gte:startOfDay,$lte:endOfDay}
+    }else{
+        const targetDate=new Date()
+      const startOfDay=new Date(targetDate)
+      const endOfDay=new Date(targetDate)
+      endOfDay.setHours(23,59,59,999)
+      startOfDay.setHours(0,0,0,0)
+      query.timestamp={$gte:startOfDay,$lte:endOfDay}
     }
-    let offset=(Number(page)-1)*Number(limit)
-    const [entries, totalEntries]=await Promise.all([
-      await Food.find(query).sort({createdAt:-1}).limit(Number(limit)).skip(Number(offset)),
-      await Food.countDocuments(query)
-    ])
+    let offset=(parsedPage-1)*parsedLimit
+   const [entries, totalEntries] = await Promise.all([
+  Food.find(query)
+    .sort({ createdAt: -1 })
+    .limit(parsedLimit)
+    .skip(offset),
+  Food.countDocuments(query),
+]);
  
-    const totalPages=Math.ceil(totalEntries/Number(limit))
+    const totalPages=Math.ceil(totalEntries/parsedLimit)
     return res.status(200).json({
       message:"Successfully fetched your food entries",
+      timeZone:(startDate&&endDate)?"Based on your timeZone":"Based on server timeZone",
       entries,
       pagination:{
-        currentPage:Number(page),
+        currentPage:parsedPage,
         totalPages,
         totalEntries,
-        limit:Number(limit),
-        hasNextPage:Number(page)<totalPages,
-        hasPrevPage:Number(page)>1
+        limit:parsedLimit,
+        hasNextPage:parsedPage<totalPages,
+        hasPrevPage:parsedPage>1
       }
     })
   
   } catch (error) {
-  console.log("Internal server error for deleting image on R2", error)
-  return res.status(500).json({
-    message:"Failed to process saving food",
-  })
+   console.error("Internal server error while fetching food entries", error);
+
+return res.status(500).json({
+  message: "Failed to fetch food entries",
+});
  }
 };
 
