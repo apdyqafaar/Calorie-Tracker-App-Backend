@@ -214,19 +214,15 @@ const createDayBounds = (startStr: string, endStr?: string) => {
 if (typeof date === "string") {
   const bounds = createDayBounds(date);
   if (!bounds) return res.status(400).json({ message: "Invalid date format" });
-  query.timestamp = bounds;
+  query.createdAt = bounds; // <-- FIX HERE
 } else if (typeof startDate === "string" && typeof endDate === "string") {
   const bounds = createDayBounds(startDate, endDate);
-  if (!bounds) return res.status(400).json({ message: "Invalid startDate or endDate format" });
-  query.timestamp = bounds;
-} else if (startDate || endDate) {
-  return res.status(400).json({ message: "Both startDate and endDate are required when querying a range" });
+  if (!bounds) return res.status(400).json({ message: "Invalid startDate or endDate" });
+  query.createdAt = bounds; // <-- FIX HERE
 } else {
-  // Default to today (UTC)
   const today = new Date();
-  query.timestamp = createDayBounds(today.toISOString())!;
+  query.createdAt = createDayBounds(today.toISOString())!; // <-- FIX HERE
 }
-
 console.log("query: ", query)
 // 3. Execute DB Queries
 const [entries, totalEntries] = await Promise.all([
