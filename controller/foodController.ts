@@ -186,7 +186,7 @@ export const getEntries = async (req: Request, res: Response) => {
   })
     }
 
-    const {startDate, endDate, limit="50", page="1"}=req.query
+    const {date, startDate, endDate, limit="50", page="1"}=req.query
     const parsedLimit=Math.min(Math.max(Number(limit)||50, 1), 100)
     const parsedPage = Math.max(Number(page) || 1, 1);
     if(!parsedLimit||typeof parsedLimit!=="number"||parsedLimit>100){
@@ -196,8 +196,13 @@ export const getEntries = async (req: Request, res: Response) => {
     }
     let query:Record<string, any>={userId}
    
-
-    if(startDate && endDate && typeof startDate==="string" && typeof endDate==="string"){
+    if(date&& typeof date==="string"){
+      const startOfDay=new Date(date)
+      const endOfDay=new Date(date)
+      endOfDay.setHours(23,59,59,999)
+      startOfDay.setHours(0,0,0,0)
+      query.timestamp={$gte:startOfDay,$lte:endOfDay}
+    }else if(startDate && endDate && typeof startDate==="string" && typeof endDate==="string"){
       //  const targetDate=new Date(date)
       const startOfDay=new Date(startDate)
       const endOfDay=new Date(endDate)
