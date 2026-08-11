@@ -54,6 +54,7 @@ export const getDailySummery = async (
     }
   ]);
 
+  console.log("result: daily reports: ", JSON.stringify(result))
   // console.log("Daily Summary Result:", result);
    const initialDailySummary = {
   date: new Date(0),
