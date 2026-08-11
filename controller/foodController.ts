@@ -227,6 +227,7 @@ if (typeof date === "string") {
   query.timestamp = createDayBounds(today.toISOString())!;
 }
 
+console.log("query: ", query)
 // 3. Execute DB Queries
 const [entries, totalEntries] = await Promise.all([
   Food.find(query)
@@ -236,6 +237,7 @@ const [entries, totalEntries] = await Promise.all([
     .lean(), // Added lean() for read performance
   Food.countDocuments(query),
 ]);
+console.log("entries: ", entries)
  
     const totalPages=Math.ceil(totalEntries/parsedLimit)
     return res.status(200).json({
