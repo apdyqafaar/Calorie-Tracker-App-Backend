@@ -187,48 +187,55 @@ export const getEntries = async (req: Request, res: Response) => {
     }
 
     const {date, startDate, endDate, limit="50", page="1"}=req.query
-    const parsedLimit=Math.min(Math.max(Number(limit)||50, 1), 100)
-    const parsedPage = Math.max(Number(page) || 1, 1);
-    if(!parsedLimit||typeof parsedLimit!=="number"||parsedLimit>100){
-           return res.status(400).json({
-     message:"invalid query"
-  })
-    }
-    let query:Record<string, any>={userId}
-   
-    // if(date&& typeof date==="string"){
-    //   const startOfDay=new Date(date)
-    //   const endOfDay=new Date(date)
-    //   endOfDay.setHours(23,59,59,999)
-    //   startOfDay.setHours(0,0,0,0)
-    //   query.timestamp={$gte:startOfDay,$lte:endOfDay}
-    // }else if(startDate && endDate && typeof startDate==="string" && typeof endDate==="string"){
-    //   //  const targetDate=new Date(date)
-    //   const startOfDay=new Date(startDate)
-    //   const endOfDay=new Date(endDate)
-    //   endOfDay.setHours(23,59,59,999)
-    //   startOfDay.setHours(0,0,0,0)
-    //   query.timestamp={$gte:startOfDay,$lte:endOfDay}
-    // }else{
-    //     const targetDate=new Date()
-    //   const startOfDay=new Date(targetDate)
-    //   const endOfDay=new Date(targetDate)
-    //   endOfDay.setHours(23,59,59,999)
-    //   startOfDay.setHours(0,0,0,0)
-    //   query.timestamp={$gte:startOfDay,$lte:endOfDay}
-    // }
-    let offset=(parsedPage-1)*parsedLimit
-   const [entries, totalEntries] = await Promise.all([
+// 1. Parse & validate pagination
+const parsedLimit = Math.min(Math.max(Number(limit) || 50, 1), 100);
+const parsedPage = Math.max(Number(page) || 1, 1);
+const offset = (parsedPage - 1) * parsedLimit;
+
+const query: Record<string, any> = { userId };
+
+// Helper to validate and create start/end UTC day bounds
+const createDayBounds = (startStr: string, endStr?: string) => {
+  const start = new Date(startStr);
+  const end = new Date(endStr || startStr);
+
+  if (isNaN(start.getTime()) || isNaN(end.getTime())) {
+    return null;
+  }
+
+  // Set UTC bounds to avoid local server timezone skew
+  start.setUTCHours(0, 0, 0, 0);
+  end.setUTCHours(23, 59, 59, 999);
+
+  return { $gte: start, $lte: end };
+};
+
+// 2. Build date query safely
+if (typeof date === "string") {
+  const bounds = createDayBounds(date);
+  if (!bounds) return res.status(400).json({ message: "Invalid date format" });
+  query.timestamp = bounds;
+} else if (typeof startDate === "string" && typeof endDate === "string") {
+  const bounds = createDayBounds(startDate, endDate);
+  if (!bounds) return res.status(400).json({ message: "Invalid startDate or endDate format" });
+  query.timestamp = bounds;
+} else if (startDate || endDate) {
+  return res.status(400).json({ message: "Both startDate and endDate are required when querying a range" });
+} else {
+  // Default to today (UTC)
+  const today = new Date();
+  query.timestamp = createDayBounds(today.toISOString())!;
+}
+
+// 3. Execute DB Queries
+const [entries, totalEntries] = await Promise.all([
   Food.find(query)
-    .sort({ createdAt: -1 })
+    .sort({ timestamp: -1 }) // Match sort field with filter field
     .limit(parsedLimit)
-    .skip(offset),
+    .skip(offset)
+    .lean(), // Added lean() for read performance
   Food.countDocuments(query),
 ]);
-console.log("query:", query)
-console.log("date:", date)
-console.log("endDate:", endDate)
-console.log("startDate:", startDate)
  
     const totalPages=Math.ceil(totalEntries/parsedLimit)
     return res.status(200).json({
