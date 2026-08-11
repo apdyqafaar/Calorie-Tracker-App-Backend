@@ -196,27 +196,27 @@ export const getEntries = async (req: Request, res: Response) => {
     }
     let query:Record<string, any>={userId}
    
-    if(date&& typeof date==="string"){
-      const startOfDay=new Date(date)
-      const endOfDay=new Date(date)
-      endOfDay.setHours(23,59,59,999)
-      startOfDay.setHours(0,0,0,0)
-      query.timestamp={$gte:startOfDay,$lte:endOfDay}
-    }else if(startDate && endDate && typeof startDate==="string" && typeof endDate==="string"){
-      //  const targetDate=new Date(date)
-      const startOfDay=new Date(startDate)
-      const endOfDay=new Date(endDate)
-      endOfDay.setHours(23,59,59,999)
-      startOfDay.setHours(0,0,0,0)
-      query.timestamp={$gte:startOfDay,$lte:endOfDay}
-    }else{
-        const targetDate=new Date()
-      const startOfDay=new Date(targetDate)
-      const endOfDay=new Date(targetDate)
-      endOfDay.setHours(23,59,59,999)
-      startOfDay.setHours(0,0,0,0)
-      query.timestamp={$gte:startOfDay,$lte:endOfDay}
-    }
+    // if(date&& typeof date==="string"){
+    //   const startOfDay=new Date(date)
+    //   const endOfDay=new Date(date)
+    //   endOfDay.setHours(23,59,59,999)
+    //   startOfDay.setHours(0,0,0,0)
+    //   query.timestamp={$gte:startOfDay,$lte:endOfDay}
+    // }else if(startDate && endDate && typeof startDate==="string" && typeof endDate==="string"){
+    //   //  const targetDate=new Date(date)
+    //   const startOfDay=new Date(startDate)
+    //   const endOfDay=new Date(endDate)
+    //   endOfDay.setHours(23,59,59,999)
+    //   startOfDay.setHours(0,0,0,0)
+    //   query.timestamp={$gte:startOfDay,$lte:endOfDay}
+    // }else{
+    //     const targetDate=new Date()
+    //   const startOfDay=new Date(targetDate)
+    //   const endOfDay=new Date(targetDate)
+    //   endOfDay.setHours(23,59,59,999)
+    //   startOfDay.setHours(0,0,0,0)
+    //   query.timestamp={$gte:startOfDay,$lte:endOfDay}
+    // }
     let offset=(parsedPage-1)*parsedLimit
    const [entries, totalEntries] = await Promise.all([
   Food.find(query)
