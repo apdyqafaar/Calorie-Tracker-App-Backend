@@ -225,6 +225,10 @@ export const getEntries = async (req: Request, res: Response) => {
     .skip(offset),
   Food.countDocuments(query),
 ]);
+console.log("query:", query)
+console.log("date:", date)
+console.log("endDate:", endDate)
+console.log("startDate:", startDate)
  
     const totalPages=Math.ceil(totalEntries/parsedLimit)
     return res.status(200).json({
