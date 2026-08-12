@@ -143,25 +143,25 @@ export const getDailySummery = async (
 
 
         // calculating macros
-        const caloriesFromProtein = meal.protein * 4;
-        const caloriesFromCarbs = meal.carbs * 4;
-        const caloriesFromFat = meal.fat * 9;
+        const caloriesFromProtein = meal.totalProtein * 4;
+        const caloriesFromCarbs = meal.totalCarbs * 4;
+        const caloriesFromFat = meal.totalFat * 9;
 
         const totalMacrosCalories = caloriesFromProtein + caloriesFromCarbs + caloriesFromFat;
 
         initialDailySummary.macros={
           carbs:{
-            grams: meal.carbs||0,
+            grams: meal.totalCarbs||0,
             calories: caloriesFromCarbs||0,
             percentage: totalMacrosCalories > 0 ? Math.round((caloriesFromCarbs / totalMacrosCalories) * 100) : 0,
           },
           protein:{
-            grams: meal.protein||0,
+            grams: meal.totalProtein||0,
             calories: caloriesFromProtein||0,
             percentage: totalMacrosCalories > 0 ? Math.round((caloriesFromProtein / totalMacrosCalories) * 100) : 0,
           },
           fat:{
-            grams: meal.fat||0,
+            grams: meal.totalFat||0,
             calories: caloriesFromFat||0,
             percentage: totalMacrosCalories > 0 ? Math.round((caloriesFromFat / totalMacrosCalories) * 100) : 0,
           }
