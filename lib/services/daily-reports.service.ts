@@ -54,7 +54,7 @@ export const getDailySummery = async (
     }
   ]);
 
-  console.log("result: daily reports: ", JSON.stringify(result))
+  // console.log("result: daily reports: ", JSON.stringify(result))
   // console.log("Daily Summary Result:", result);
    const initialDailySummary = {
   date: new Date(0),
@@ -126,6 +126,7 @@ export const getDailySummery = async (
   
   }
 
+
 //  Populate meal breakdown
   if(result  && result.mealStats && result.mealStats.length > 0) {
      result.mealStats.forEach((meal: any) => {
@@ -141,7 +142,7 @@ export const getDailySummery = async (
             }
         }
 
-
+          console.log("meal:", meal)
         // calculating macros
         const caloriesFromProtein = meal.totalProtein * 4;
         const caloriesFromCarbs = meal.totalCarbs * 4;
@@ -151,17 +152,17 @@ export const getDailySummery = async (
 
         initialDailySummary.macros={
           carbs:{
-            grams: meal.totalCarbs||0,
+            grams: initialDailySummary.totalCarbs||0,
             calories: caloriesFromCarbs||0,
             percentage: totalMacrosCalories > 0 ? Math.round((caloriesFromCarbs / totalMacrosCalories) * 100) : 0,
           },
           protein:{
-            grams: meal.totalProtein||0,
+            grams: initialDailySummary.totalProtein||0,
             calories: caloriesFromProtein||0,
             percentage: totalMacrosCalories > 0 ? Math.round((caloriesFromProtein / totalMacrosCalories) * 100) : 0,
           },
           fat:{
-            grams: meal.totalFat||0,
+            grams: initialDailySummary.totalFat||0,
             calories: caloriesFromFat||0,
             percentage: totalMacrosCalories > 0 ? Math.round((caloriesFromFat / totalMacrosCalories) * 100) : 0,
           }
