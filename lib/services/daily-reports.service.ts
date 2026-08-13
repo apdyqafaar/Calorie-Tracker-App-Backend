@@ -43,7 +43,7 @@ export const getDailySummery = async (
                     $group:{
                         _id:null,
                         totalCalories:{$sum:"$calorie"},
-                        totalProtein:{$sum:"$protein"},
+                        totalProtein:{$sum:"protein"},
                         totalCarbs:{$sum:"$carbs"},
                         totalFat:{$sum:"$fat"},
                         totalEntries:{$sum:1},
