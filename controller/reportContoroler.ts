@@ -42,6 +42,7 @@ export const getDailyReports = async (req: Request, res: Response) => {
         isOverGoal: dailySummary.totalCalories > user.dailyCalorieGaol,
         macros: dailySummary.macros,
         mealBreakdown: dailySummary.mealBreakdown,
+        entriesCount:dailySummary.entries
       },
     });
   } catch (error) {
