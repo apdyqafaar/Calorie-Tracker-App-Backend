@@ -31,7 +31,7 @@ export const getWeeklySummery = async (
                 {
                     $group:{
                         _id:{$dateToString: { format: "%Y-%m-%d", date: "$createdAt" }},
-                        calories:{$sum:"$calories"},
+                        calories:{$sum:"$calorie"},
                         protein:{$sum:"$protein"},
                         carbs:{$sum:"$carbs"},
                         fat:{$sum:"$fat"},
@@ -46,7 +46,7 @@ export const getWeeklySummery = async (
                 {
                     $group:{
                         _id:null,
-                        totalCalories:{$sum:"$calories"},
+                        totalCalories:{$sum:"$calorie"},
                         totalProtein:{$sum:"$protein"},
                         totalCarbs:{$sum:"$carbs"},
                         totalFat:{$sum:"$fat"},
